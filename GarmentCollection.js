@@ -35,7 +35,10 @@ export default class GarmentCollection extends Component<{}> {
 
     this.state = {
       collectionList: [],
-      addNameModal: false
+      addNameModal: false,
+      changeCategoryName: false,
+      optionsModal: false,
+      deleteCategoryModal: false
     }
 
   }
@@ -48,7 +51,17 @@ export default class GarmentCollection extends Component<{}> {
     AsyncStorage.getItem('username').then( (username) => {
       this.setState({
         username: username
-      })
+      });
+
+      const getCategoryName = firebase.database().ref(username + '/categories/' + this.props.navigation.state.params.data.categoryID);
+      getCategoryName.once('value').then(function(data){
+        const getData = data.val();
+        this.setState({
+          categoryName: getData.categoryName
+        })
+      }.bind(this));
+
+
       const getCollectList = firebase.database().ref(username + '/categories/' + this.props.navigation.state.params.data.categoryID + '/uploads');
       getCollectList.on('child_added', function(data){
         const getData = data.val();
@@ -114,6 +127,178 @@ export default class GarmentCollection extends Component<{}> {
   render() {
     return (
       <View style={styles.container}>
+
+        <Modal
+           hardwareAccelerated={true}
+           animationType={"fade"}
+           transparent={true}
+           visible={this.state.optionsModal}
+           onRequestClose={() => this.setState({optionsModal: false})}
+           >
+           <View style={{backgroundColor: 'rgba(0,0,0,0.5)', flex:1, justifyContent: 'center', alignItems: 'center' }}>
+             <View style={{width: 300, borderRadius: 5, backgroundColor:'white', elevation: 4, padding: 15, justifyContent:'center', alignItems: 'center'}}>
+               <Text style={{fontSize: 18, fontWeight: 'bold', color: '#2196f3'}}>
+                 Options
+               </Text>
+               <View>
+                 <TouchableHighlight
+                   onPress={()=>{
+                     this.setState({
+                       optionsModal: false,
+                       changeCategoryName: true
+                     })
+                   }}
+                 >
+                  <Text>
+                    edit category name
+                  </Text>
+                 </TouchableHighlight>
+               </View>
+               <View>
+                 <TouchableHighlight
+                   onPress={()=>{
+                     this.setState({
+                       optionsModal: false,
+                       deleteCategoryModal: true
+                     })
+                   }}
+                 >
+                  <Text>
+                    delete category
+                  </Text>
+                 </TouchableHighlight>
+               </View>
+               <View style={{flexDirection: 'row'}}>
+                 <TouchableHighlight
+                   onPress={()=>{
+                     this.setState({
+                       optionsModal: false,
+                     })
+                   }}
+                 >
+                   <Text>
+                     Cancel
+                   </Text>
+                 </TouchableHighlight>
+               </View>
+             </View>
+           </View>
+         </Modal>
+
+
+         {/* CHANGE CATEGORY NAME MODAL */}
+        <Modal
+           hardwareAccelerated={true}
+           animationType={"fade"}
+           transparent={true}
+           visible={this.state.changeCategoryName}
+           onRequestClose={() => this.setState({changeCategoryName: false})}
+           >
+           <View style={{backgroundColor: 'rgba(0,0,0,0.5)', flex:1, justifyContent: 'center', alignItems: 'center' }}>
+             <View style={{width: 300, borderRadius: 5, backgroundColor:'white', elevation: 4, padding: 15, justifyContent:'center', alignItems: 'center'}}>
+               <Text style={{fontSize: 18, fontWeight: 'bold', color: '#2196f3'}}>
+                 Category Name
+               </Text>
+               <TextInput
+                 underlineColorAndroid="transparent"
+                 autoCapitalize="sentences"
+                 autoCorrect={true}
+                 style={{width: 200, backgroundColor: "#FCDA4F", opacity: 0.3, height: 40}}
+                 onChangeText={(categoryName) => {
+                   this.setState({
+                       categoryName,
+                   });
+                 }}
+                 value={this.state.categoryName}
+                 placeholder="name for this category"
+               />
+               <View style={{flexDirection: 'row'}}>
+                 <TouchableHighlight
+                   onPress={()=>{
+                     this.setState({
+                       changeCategoryName: false,
+                     })
+                   }}
+                 >
+                   <Text>
+                     Cancel
+                   </Text>
+                 </TouchableHighlight>
+                 <View style={{width: 30, backgroundColor: 'transparent'}}></View>
+                 <TouchableHighlight
+                   onPress={()=>{
+                     this.setState({
+                       changeCategoryName: false
+                     });
+                     if(this.state.itemName === '' || this.state.itemName === ' '){
+                       return;
+                     }
+                     const changeNameOfCategory = firebase.database().ref(this.state.username + '/categories/' + this.props.navigation.state.params.data.categoryID);
+                     changeNameOfCategory.update({
+                       categoryName: this.state.categoryName
+                     });
+                     const { navigate } = this.props.navigation;
+                     navigate('Home')
+                   }}
+                 >
+                   <Text>
+                     OK
+                   </Text>
+                 </TouchableHighlight>
+               </View>
+             </View>
+           </View>
+         </Modal>
+
+
+         {/* DELETE CATEGORY MODAL */}
+         <Modal
+            hardwareAccelerated={true}
+            animationType={"fade"}
+            transparent={true}
+            visible={this.state.deleteCategoryModal}
+            onRequestClose={() => this.setState({deleteCategoryModal: false})}
+            >
+            <View style={{backgroundColor: 'rgba(0,0,0,0.5)', flex:1, justifyContent: 'center', alignItems: 'center' }}>
+              <View style={{width: 300, borderRadius: 5, backgroundColor:'white', elevation: 4, padding: 15, justifyContent:'center', alignItems: 'center'}}>
+                <Text style={{fontSize: 18, fontWeight: 'bold', color: '#2196f3'}}>
+                  Delete Category
+                </Text>
+                <Text>
+                  Are u sure you want to permanently delete all your uploads in this category?
+                </Text>
+                <View style={{flexDirection: 'row'}}>
+                  <TouchableHighlight
+                    onPress={()=>{
+                      this.setState({
+                        deleteCategoryModal: false,
+                      })
+                    }}
+                  >
+                    <Text>
+                      Cancel
+                    </Text>
+                  </TouchableHighlight>
+                  <View style={{width: 30, backgroundColor: 'transparent'}}></View>
+                  <TouchableHighlight
+                    onPress={()=>{
+                      this.setState({
+                        deleteCategoryModal: false
+                      });
+                      const deleteCategory = firebase.database().ref(this.state.username + '/categories/' + this.props.navigation.state.params.data.categoryID);
+                      deleteCategory.set(null);
+                      const { navigate } = this.props.navigation;
+                      navigate('Home')
+                    }}
+                  >
+                    <Text>
+                      OK
+                    </Text>
+                  </TouchableHighlight>
+                </View>
+              </View>
+            </View>
+          </Modal>
 
         <Modal
            hardwareAccelerated={true}
@@ -259,6 +444,21 @@ export default class GarmentCollection extends Component<{}> {
           >
             <View style={{width: 50, height: 50, justifyContent: 'center', alignItems: 'center'}}>
               <Icon name="camera" size={18} color="black" />
+            </View>
+          </TouchableHighlight>
+        </View>
+
+        <View style={{alignItems: 'center', justifyContent: 'center', height: 35, width: 35, position: 'absolute', right: 27.5, bottom: 150, backgroundColor: '#CCCCCC', borderRadius: 25, elevation: 2}}>
+          <TouchableHighlight
+            underlayColor='transparent'
+            onPress={()=>{
+              this.setState({
+                optionsModal: true
+              })
+            }}
+          >
+            <View style={{width: 50, height: 50, justifyContent: 'center', alignItems: 'center'}}>
+              <Icon name="info-circle" size={17} color="black" />
             </View>
           </TouchableHighlight>
         </View>

@@ -13,6 +13,7 @@ import MyMatches from './MyMatches';
 import Garments from './Garments';
 import Sets from './Sets';
 import ViewSet from './ViewSet';
+import Advertisements from './Advertisements';
 
 var config = {
    apiKey: "AIzaSyD-mAV_THSvabNk_A8u05ipzn4IsDDKWBk",
@@ -34,7 +35,8 @@ const Clothesaku = StackNavigator({
   Sets: {screen: Sets},
   Garments: {screen: Garments},
   MyMatches: {screen: MyMatches},
-  SelectGarments: {screen: SelectGarments}
+  SelectGarments: {screen: SelectGarments},
+  Advertisements: {screen: Advertisements}
 }, {
   initialRouteName: 'Home',
   headerMode: 'screen'

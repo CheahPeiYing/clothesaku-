@@ -70,7 +70,7 @@ export default class Sets extends Component<{}> {
 
   renderItem = ({item, index}) => {
       return(
-        <View style={{height: Dimensions.get('window').width / 3, width: Dimensions.get('window').width / 3, backgroundColor: 'white'}}>
+        <View style={{justifyContent: 'center', alignItems: 'center', height: Dimensions.get('window').width / 3, width: Dimensions.get('window').width / 3, backgroundColor: 'white', borderWidth: 5, borderColor: '#FFD140'}}>
         <TouchableHighlight
           onPress={()=>{
             const { navigate } = this.props.navigation;

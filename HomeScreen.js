@@ -74,6 +74,7 @@ export default class HomeScreen extends Component<{}> {
         </View>
 
         <TouchableHighlight
+          underlayColor="transparent"
           onPress={()=>{
             navigate('Garments')
           }}>
@@ -86,6 +87,7 @@ export default class HomeScreen extends Component<{}> {
         <View style={{height: 15}}></View>
 
         <TouchableHighlight
+          underlayColor="transparent"
           onPress={()=>{
             navigate('MixMatch')
           }}>
@@ -99,6 +101,7 @@ export default class HomeScreen extends Component<{}> {
           <View style={{height: 15}}></View>
 
         <TouchableHighlight
+          underlayColor="transparent"
           onPress={()=>{
             navigate('Sets')
           }}>
@@ -113,6 +116,7 @@ export default class HomeScreen extends Component<{}> {
 
         <View style={{height: 100}}></View>
         <TouchableHighlight
+          underlayColor="transparent"
           onPress={()=>{
             AsyncStorage.clear();
             navigate('Login')

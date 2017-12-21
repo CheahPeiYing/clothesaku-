@@ -125,7 +125,7 @@ export default class SelectGarments extends Component<{}> {
                         setName: this.state.setName,
                         images: this.state.myMatches
                       });
-                      navigate('Home');
+                      navigate('Advertisements');
                       ToastAndroid.show(
                           'Collection saved',
                           ToastAndroid.LONG

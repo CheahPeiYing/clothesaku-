@@ -29,7 +29,8 @@ export default class SelectGarments extends Component<{}> {
     super(props);
 
     this.state = {
-      mySets: []
+      mySets: [],
+      removeItemModal: false
     }
 
   }
@@ -50,11 +51,20 @@ export default class SelectGarments extends Component<{}> {
 
   renderItem = ({item, index}) => {
       return(
-        <View>
-          <Image
-            source={{uri: item}}
-            style={{height: Dimensions.get('window').width / 2, width: Dimensions.get('window').width / 2}}
-          />
+        <View style={{borderWidth: 5, borderColor: 'transparent'}}>
+          <TouchableHighlight
+            onLongPress={()=>{
+              this.setState({
+                itemIndex: index,
+                removeItemModal: true
+              })
+            }}
+          >
+            <Image
+              source={{uri: item}}
+              style={{height: Dimensions.get('window').width / 2, width: Dimensions.get('window').width / 2}}
+            />
+        </TouchableHighlight>
         </View>
       )
   }
@@ -63,6 +73,52 @@ export default class SelectGarments extends Component<{}> {
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
+
+        <Modal
+           hardwareAccelerated={true}
+           animationType={"fade"}
+           transparent={true}
+           visible={this.state.removeItemModal}
+           onRequestClose={() => this.setState({removeItemModal: false})}
+           >
+           <View style={{backgroundColor: 'rgba(0,0,0,0.5)', flex:1, justifyContent: 'center', alignItems: 'center' }}>
+             <View style={{width: 300, borderRadius: 5, backgroundColor:'white', elevation: 4, padding: 15, justifyContent:'center', alignItems: 'center'}}>
+               <Text style={{fontSize: 18, fontWeight: 'bold', color: '#2196f3'}}>
+                 Delete Item
+               </Text>
+               <View style={{flexDirection: 'row'}}>
+                 <TouchableHighlight
+                   onPress={()=>{
+                     this.setState({
+                       removeItemModal: false,
+                     })
+                   }}
+                 >
+                   <Text>
+                     Cancel
+                   </Text>
+                 </TouchableHighlight>
+                 <View style={{width: 30, backgroundColor: 'transparent'}}></View>
+                 <TouchableHighlight
+                   onPress={()=>{
+                     this.setState({
+                       removeItemModal: false
+                     });
+                     const deleteItem = firebase.database().ref(this.state.username + '/sets/' + this.props.navigation.state.params.data.setID + '/images/' + this.state.itemIndex);
+                     deleteItem.set(null);
+                     const { navigate } = this.props.navigation;
+                     navigate('Sets')
+                   }}
+                 >
+                   <Text>
+                     OK
+                   </Text>
+                 </TouchableHighlight>
+               </View>
+             </View>
+           </View>
+         </Modal>
+
         <View style={{height: 80, justifyContent: 'center', alignItems: 'center'}}>
           <Text style={{fontSize: 20}}>
             {this.props.navigation.state.params.data.name}

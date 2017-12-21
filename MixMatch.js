@@ -219,6 +219,22 @@ export default class MixMatch extends Component<{}> {
             </View>
           </TouchableHighlight>
         </View>
+
+        <View style={{alignItems: 'center', justifyContent: 'center', height: 40, width: 40, position: 'absolute', right: 20, bottom: 20, backgroundColor: '#CCCCCC', borderRadius: 25, elevation: 2}}>
+          <TouchableHighlight
+            underlayColor='transparent'
+            onPress={()=>{
+              this.setState({
+                verticals: [],
+                collectionList: []
+              })
+            }}
+          >
+            <View style={{width: 50, height: 50, justifyContent: 'center', alignItems: 'center'}}>
+              <Icon name="refresh" size={20} color="black" />
+            </View>
+          </TouchableHighlight>
+        </View>
       </View>
     );
   }
