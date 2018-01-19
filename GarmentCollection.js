@@ -17,7 +17,8 @@ import {
   Image,
   Dimensions,
   Modal,
-  TextInput
+  TextInput,
+  ToastAndroid
 } from 'react-native';
 
 import RNFetchBlob from 'react-native-fetch-blob'
@@ -38,7 +39,9 @@ export default class GarmentCollection extends Component<{}> {
       addNameModal: false,
       changeCategoryName: false,
       optionsModal: false,
-      deleteCategoryModal: false
+      deleteCategoryModal: false,
+      deleteItemModal: false,
+      indexOfItemDeleted: 0
     }
 
   }
@@ -83,6 +86,13 @@ export default class GarmentCollection extends Component<{}> {
         <View>
           <TouchableHighlight
             underlayColor="transparent"
+            onLongPress={()=>{
+              this.setState({
+                deleteItemModal: true,
+                selectedItemID: item.itemID,
+                indexOfItemDeleted: index
+              })
+            }}
             onPress={()=>{
               // const indexOfUpdateRowText = this.state.collectionList.map(function(i){ return i}).indexOf(item);
               //   this.state.collectionList[indexOfUpdateRowText] = {
@@ -299,6 +309,63 @@ export default class GarmentCollection extends Component<{}> {
               </View>
             </View>
           </Modal>
+
+          <Modal
+             hardwareAccelerated={true}
+             animationType={"fade"}
+             transparent={true}
+             visible={this.state.deleteItemModal}
+             onRequestClose={() => this.setState({deleteItemModal: false})}
+             >
+             <View style={{backgroundColor: 'rgba(0,0,0,0.5)', flex:1, justifyContent: 'center', alignItems: 'center' }}>
+               <View style={{width: 300, borderRadius: 5, backgroundColor:'white', elevation: 4, padding: 15, justifyContent:'center', alignItems: 'center'}}>
+                 <Text style={{fontSize: 18, fontWeight: 'bold', color: '#2196f3'}}>
+                   Delete this item?
+                 </Text>
+
+                 <View style={{flexDirection: 'row'}}>
+                   <TouchableHighlight
+                     onPress={()=>{
+                       this.setState({
+                         deleteItemModal: false,
+                       })
+                     }}
+                   >
+                     <Text>
+                       Cancel
+                     </Text>
+                   </TouchableHighlight>
+                   <View style={{width: 30, backgroundColor: 'transparent'}}></View>
+                   <TouchableHighlight
+                     onPress={()=>{
+                       this.setState({
+                         deleteItemModal: false
+                       });
+                       const deleteItem = firebase.database().ref(this.state.username + '/categories/' + this.props.navigation.state.params.data.categoryID + '/uploads/' + this.state.selectedItemID);
+                       deleteItem.set(null, function(err){
+                         if(err){
+
+                         }else{
+                           ToastAndroid.show(
+                             'Item deleted',
+                             ToastAndroid.LONG
+                           );
+                           this.state.collectionList.splice(this.state.indexOfItemDeleted, 1);
+                           this.setState({
+                             collectionList: this.state.collectionList
+                           })
+                         }
+                       }.bind(this))
+                     }}
+                   >
+                     <Text>
+                       OK
+                     </Text>
+                   </TouchableHighlight>
+                 </View>
+               </View>
+             </View>
+           </Modal>
 
         <Modal
            hardwareAccelerated={true}

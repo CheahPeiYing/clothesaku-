@@ -17,7 +17,8 @@ import {
   Image,
   Dimensions,
   Modal,
-  TextInput
+  TextInput,
+  BackHandler
 } from 'react-native';
 
 import * as firebase from "firebase";
@@ -42,6 +43,21 @@ export default class Advertisements extends Component<{}> {
   static navigationOptions = ({navigation}) => ({
     header: null
   });
+
+  componentWillMount(){
+    BackHandler.addEventListener('hardwareBackPress', this.hardwareBackPressCallBack);
+  }
+
+  componentWillUnmount(){
+    BackHandler.removeEventListener('hardwareBackPress', this.hardwareBackPressCallBack);
+  }
+
+  hardwareBackPressCallBack = () => {
+    const { goBack } = this.props.navigation;
+    goBack(null);
+    goBack(null);
+  }
+
 
   componentDidMount(){
     AsyncStorage.getItem('username').then( (username) => {
@@ -86,7 +102,6 @@ export default class Advertisements extends Component<{}> {
   }
 
   render() {
-    const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
 

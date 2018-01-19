@@ -54,6 +54,12 @@ export default class SelectGarments extends Component<{}> {
     });
   }
 
+  componentWillUnmount(){
+    this.setState({
+      myMatches: []
+    })
+  }
+
 
   renderItem = ({item, index}) => {
       return(

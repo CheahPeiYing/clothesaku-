@@ -188,6 +188,7 @@ export default class MixMatch extends Component<{}> {
         />
         <View style={{position: 'absolute', top: 22, right: 20, backgroundColor: 'white', borderRadius: 25, elevation: 2}}>
           <TouchableHighlight
+            underlayColor='transparent'
             onPress={()=>{
               if(this.state.verticals.length === 0){
                 ToastAndroid.show(
@@ -226,7 +227,8 @@ export default class MixMatch extends Component<{}> {
             onPress={()=>{
               this.setState({
                 verticals: [],
-                collectionList: []
+                collectionList: [],
+                selectedSlides: []
               })
             }}
           >
